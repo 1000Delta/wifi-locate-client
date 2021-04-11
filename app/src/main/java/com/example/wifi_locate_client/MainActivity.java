@@ -1,5 +1,6 @@
 package com.example.wifi_locate_client;
 
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -25,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        WifiManager wifi = (WifiManager) getSystemService(WIFI_SERVICE);
+
     }
 
 }
