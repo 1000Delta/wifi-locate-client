@@ -18,4 +18,8 @@ public class HomeViewModel extends ViewModel {
     public LiveData<String> getText() {
         return mText;
     }
+
+    public void appendText(String text) {
+        mText.setValue(mText.getValue() + text);
+    }
 }
