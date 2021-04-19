@@ -1,5 +1,6 @@
 package com.example.wifi_locate_client;
 
+import android.Manifest;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,12 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        // 申请 wifi 扫描权限
+        this.requestPermissions(
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                0
+        );
     }
 
 }
