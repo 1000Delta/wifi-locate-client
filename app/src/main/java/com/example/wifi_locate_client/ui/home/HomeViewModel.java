@@ -19,7 +19,11 @@ public class HomeViewModel extends ViewModel {
         return mText;
     }
 
-    public void appendText(String text) {
+    public void addText(String text) {
         mText.setValue(mText.getValue() + text);
+    }
+
+    public void setText(String text) {
+        mText.setValue(text);
     }
 }

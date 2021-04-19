@@ -1,8 +1,13 @@
 package com.example.wifi_locate_client.ui.home;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.wifi_locate_client.R;
 
@@ -28,15 +33,12 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
+                new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
+        textView.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         initWifiScan(root);
 
@@ -48,29 +50,46 @@ public class HomeFragment extends Fragment {
      * @param root Activity 根对象，用于定位view
      */
     private void initWifiScan(View root) {
-        WifiManager wifi = (WifiManager) root.getContext().getSystemService(WIFI_SERVICE);
+
         final Button wifiRefreshBtn = root.findViewById(R.id.btn_wifi_refresh);
 
+        WifiManager wifi = (WifiManager) root.getContext().getSystemService(WIFI_SERVICE);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        getActivity().registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                printWifiScanResults(wifi);
+            }
+        }, filter);
+
+
+        // 按钮触发手动更新
         wifiRefreshBtn.setOnClickListener(v -> {
 
-            System.out.println("click btn");
-            if (wifi.isWifiEnabled()) {
-                // scan wifi
-                wifi.startScan();
-                List<ScanResult> scanList = wifi.getScanResults();
-                if (scanList.size() > 0) {
-
-                    homeViewModel.appendText("\nScan result:");
-                    scanList.forEach(res -> homeViewModel.appendText(String.format(
-                            "\nBSSID: %1$s\nSSID: %2$s\nfrequency: %3$s\nlevel: %4$s\n",
-                            res.BSSID, res.SSID, res.frequency, res.level
-                    )));
-                } else {
-                    homeViewModel.appendText("\nNo scan result.");
-                }
-            } else {
-                homeViewModel.appendText("****** PLEASE ENABLE WIFI ******\n");
-            }
+            // scan wifi
+            wifi.startScan();
         });
+    }
+
+    private void printWifiScanResults(WifiManager wifi) {
+
+        if (wifi.isWifiEnabled()) {
+
+            List<ScanResult> scanResults = wifi.getScanResults();
+            if (scanResults.size() > 0) {
+                homeViewModel.setText("Scan result:\n");
+                homeViewModel.addText("timestamp:" + System.nanoTime());
+                scanResults.forEach(res -> homeViewModel.addText(String.format(
+                        "\nBSSID: %1$s\nSSID: %2$s\nfrequency: %3$s\nlevel: %4$s\n",
+                        res.BSSID, res.SSID, res.frequency, res.level
+                )));
+            } else {
+                homeViewModel.addText("\nNo scan result.");
+            }
+        } else {
+            homeViewModel.addText("****** PLEASE ENABLE WIFI ******\n");
+        }
     }
 }
