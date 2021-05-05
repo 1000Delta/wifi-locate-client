@@ -35,9 +35,14 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.navigation:navigation-ui:2.3.5'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'com.alibaba:fastjson:1.2.76'
+    implementation 'org.projectlombok:lombok:1.12.6'
+    annotationProcessor 'org.projectlombok:lombok:1.12.6'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+
+//    annotationProcessor "org.projectlombok:lombok:1.12.6" //or v. 1.16.2 in your case.
 }
