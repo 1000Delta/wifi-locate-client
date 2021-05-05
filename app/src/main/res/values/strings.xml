@@ -4,4 +4,8 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="btn_wifi_refresh">refresh</string>
+
+    <string name="title_server_host">Host</string>
+    <string name="hint_server_host">Host Domain or IP</string>
+    <string name="pref_server_host">server_host</string>
 </resources>
