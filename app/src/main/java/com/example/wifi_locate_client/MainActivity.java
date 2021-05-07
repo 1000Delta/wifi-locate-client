@@ -29,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 申请 wifi 扫描权限
         this.requestPermissions(
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                },
                 0
         );
     }
