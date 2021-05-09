@@ -2,7 +2,9 @@
     <string name="app_name">wifi-locate-client</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
+    <string name="title_map_list">Map list</string>
     <string name="title_notifications">Notifications</string>
+
     <string name="btn_wifi_refresh">refresh</string>
 
     <string name="title_server_host">Host</string>

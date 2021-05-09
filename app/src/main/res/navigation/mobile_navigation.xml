@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.wifi_locate_client.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_map_list"
+        android:name="com.example.wifi_locate_client.ui.map_list.MapInfoListFragment"
+        android:label="@string/title_map_list"
+        tools:layout="@layout/fragment_map_info_list" />
 
     <fragment
         android:id="@+id/navigation_notifications"
