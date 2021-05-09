@@ -2,22 +2,19 @@ package com.example.wifi_locate_client.ui.map_list;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.wifi_locate_client.R;
-import com.example.wifi_locate_client.dummy.DummyContent;
 import com.example.wifi_locate_client.utils.MapInfo;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * A fragment representing a list of Items.
@@ -72,7 +69,7 @@ public class MapInfoListFragment extends Fragment {
             recyclerView.setAdapter(new MapInfoListRecyclerViewAdapter(Arrays.asList(
                     new MapInfo(1, "map1"),
                     new MapInfo(2, "map2")
-            )));
+            ), recyclerView));
         }
         return view;
     }
