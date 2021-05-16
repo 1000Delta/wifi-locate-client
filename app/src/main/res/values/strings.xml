@@ -5,7 +5,8 @@
     <string name="title_map_list">Map list</string>
     <string name="title_notifications">Notifications</string>
 
-    <string name="btn_wifi_refresh">refresh</string>
+    <string name="btn_wifi_collect">上报</string>
+    <string name="btn_wifi_locate">定位</string>
 
     <string name="title_server_host">Host</string>
     <string name="hint_server_host">Host Domain or IP</string>

@@ -8,30 +8,26 @@
 
     <TextView
         android:id="@+id/text_home"
-        android:layout_width="464dp"
-        android:layout_height="409dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="0dp"
+        android:layout_height="371dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:scrollbars="vertical"
         android:scrollHorizontally="false"
         android:textAlignment="center"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.501" />
 
     <Button
-        android:id="@+id/btn_wifi_refresh"
+        android:id="@+id/btn_wifi_collect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/btn_wifi_refresh"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/btn_wifi_collect"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_home" />
 
@@ -96,4 +92,15 @@
         app:layout_constraintBottom_toBottomOf="@+id/edit_loc_x"
         app:layout_constraintEnd_toEndOf="@+id/text_title_server_host"
         app:layout_constraintTop_toTopOf="@+id/edit_loc_x" />
+
+    <Button
+        android:id="@+id/btn_wifi_locate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="36dp"
+        android:text="@string/btn_wifi_locate"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_wifi_collect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_wifi_collect"
+        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
