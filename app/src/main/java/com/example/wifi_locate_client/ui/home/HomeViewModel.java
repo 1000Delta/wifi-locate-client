@@ -12,12 +12,18 @@ public class HomeViewModel extends ViewModel {
 
     private MutableLiveData<String> hostText;
 
+    private MutableLiveData<Double> xText;
+    private MutableLiveData<Double> yText;
+
     public HomeViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is home fragment");
 
         hostText = new MutableLiveData<>();
         hostText.setValue("");
+
+        xText = new MutableLiveData<>();
+        yText = new MutableLiveData<>();
     }
 
     public LiveData<String> getText() {
@@ -38,5 +44,21 @@ public class HomeViewModel extends ViewModel {
 
     public void setHost(String text) {
         hostText.setValue(text);
+    }
+
+    public LiveData<Double> getX() {
+        return xText;
+    }
+
+    public void setX(Double text) {
+        xText.setValue(text);
+    }
+
+    public LiveData<Double> getY() {
+        return yText;
+    }
+
+    public void setY(Double text) {
+        yText.setValue(text);
     }
 }

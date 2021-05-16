@@ -14,4 +14,13 @@ public class CollectReqDTO {
     private Integer mapID;
 
     private List<APInfo> apList;
+
+    private LocationInfoDTO location;
+
+    @Data
+    @AllArgsConstructor(suppressConstructorProperties = true)
+    public static class LocationInfoDTO {
+        private Double x;
+        private Double y;
+    }
 }

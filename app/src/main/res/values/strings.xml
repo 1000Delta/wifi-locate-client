@@ -10,4 +10,8 @@
     <string name="title_server_host">Host</string>
     <string name="hint_server_host">Host Domain or IP</string>
     <string name="pref_server_host">server_host</string>
+
+    <string name="hist_loc_x">X</string>
+    <string name="hist_loc_y">Y</string>
+    <string name="title_loc">x/y</string>
 </resources>

@@ -30,7 +30,9 @@ import com.example.wifi_locate_client.dto.CollectReqDTO;
 import com.example.wifi_locate_client.utils.APInfo;
 
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import okhttp3.MediaType;
@@ -48,6 +50,8 @@ public class HomeFragment extends Fragment {
     private SharedPreferences preferences;
 
     private LiveData<String> host;
+    private LiveData<Double> locX;
+    private LiveData<Double> locY;
 
     private String prefKeyServerHost;
 
@@ -84,16 +88,54 @@ public class HomeFragment extends Fragment {
 
         // 初始化常用变量
         host = homeViewModel.getHost();
+        locX = homeViewModel.getX();
+        locY = homeViewModel.getY();
         prefKeyServerHost = getString(R.string.pref_server_host);
 
         // 监听输入框将变化的 IP 输出到标记
         final TextView hostTextView = root.findViewById(R.id.text_server_host_value);
         host.observe(getViewLifecycleOwner(), hostTextView::setText);
 
-
         // 启动时加载存储的值
         preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
         homeViewModel.setHost(loadHostValue());
+
+        // 记录坐标
+        final TextView locXTextView = root.findViewById(R.id.edit_loc_x);
+        locXTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                homeViewModel.setX(Double.parseDouble(s.toString()));
+            }
+        });
+        final TextView locYTextView = root.findViewById(R.id.edit_loc_y);
+        locYTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                homeViewModel.setY(Double.parseDouble(s.toString()));
+            }
+        });
+
 
         initWifiScan(root);
         httpClient = new OkHttpClient();
@@ -149,10 +191,10 @@ public class HomeFragment extends Fragment {
             List<ScanResult> scanResults = wifi.getScanResults();
             if (scanResults.size() > 0) {
                 homeViewModel.setText("Scan result:\n");
-                homeViewModel.addText("timestamp:" + System.nanoTime());
+                homeViewModel.addText(String.format(Locale.CHINA, "timestamp: %s\n", new Date(System.currentTimeMillis()).toString()));
                 scanResults.forEach(res -> homeViewModel.addText(String.format(
-                        "\nBSSID: %1$s\nSSID: %2$s\nfrequency: %3$s\nlevel: %4$s\n",
-                        res.BSSID, res.SSID, res.frequency, res.level
+                        "%1$s: %2$s\n",
+                        res.BSSID, res.level
                 )));
             } else {
                 homeViewModel.addText("\nNo scan result.");
@@ -180,11 +222,12 @@ public class HomeFragment extends Fragment {
                     .collect(Collectors.toList());
 
             CollectReqDTO reqData = new CollectReqDTO(
-                    0,
-                    apList
+                    2,
+                    apList,
+                    new CollectReqDTO.LocationInfoDTO(locX.getValue(), locY.getValue())
             );
 
-            URL url = new URL(host.getValue() + ":8080" + "/echo");
+            URL url = new URL(host.getValue() + ":8080" + "/map/collect");
             RequestBody reqBody = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(reqData));
 
             Request req = new Request.Builder()
@@ -211,7 +254,7 @@ public class HomeFragment extends Fragment {
                     storeHostValue();
                 }
             } catch (Exception e) {
-                addMainTextOnUIThread("http thread error:" + e.getMessage());
+                addMainTextOnUIThread("http thread error:" + e.toString());
             }
         }).start();
     }

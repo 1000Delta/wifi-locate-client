@@ -65,4 +65,35 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@+id/edit_server_host"
         app:layout_constraintTop_toBottomOf="@+id/edit_server_host" />
+
+    <EditText
+        android:id="@+id/edit_loc_x"
+        android:layout_width="71dp"
+        android:layout_height="42dp"
+        android:ems="10"
+        android:hint="@string/hist_loc_x"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="@+id/edit_server_host"
+        tools:layout_editor_absoluteY="22dp" />
+
+    <EditText
+        android:id="@+id/edit_loc_y"
+        android:layout_width="75dp"
+        android:layout_height="45dp"
+        android:ems="10"
+        android:hint="@string/hist_loc_y"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_loc_x"
+        app:layout_constraintEnd_toEndOf="@+id/edit_server_host"
+        app:layout_constraintStart_toEndOf="@+id/edit_loc_x"
+        app:layout_constraintTop_toTopOf="@+id/edit_loc_x" />
+
+    <TextView
+        android:id="@+id/text_loc_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_loc"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_loc_x"
+        app:layout_constraintEnd_toEndOf="@+id/text_title_server_host"
+        app:layout_constraintTop_toTopOf="@+id/edit_loc_x" />
 </androidx.constraintlayout.widget.ConstraintLayout>
