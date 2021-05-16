@@ -132,7 +132,11 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                homeViewModel.setY(Double.parseDouble(s.toString()));
+                try {
+                    homeViewModel.setY(Double.parseDouble(s.toString()));
+                } catch (NumberFormatException e) {
+                    homeViewModel.setY(0.0);
+                }
             }
         });
 
