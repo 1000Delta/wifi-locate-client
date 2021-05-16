@@ -24,9 +24,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.wifi_locate_client.R;
 import com.example.wifi_locate_client.dto.CollectReqDTO;
+import com.example.wifi_locate_client.dto.LocateReqDTO;
+import com.example.wifi_locate_client.dto.LocateRespDTO;
 import com.example.wifi_locate_client.utils.APInfo;
 
 import java.net.URL;
@@ -115,7 +118,11 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                homeViewModel.setX(Double.parseDouble(s.toString()));
+                try {
+                    homeViewModel.setX(Double.parseDouble(s.toString()));
+                } catch (NumberFormatException e) {
+                    homeViewModel.setX(0.0);
+                }
             }
         });
         final TextView locYTextView = root.findViewById(R.id.edit_loc_y);
@@ -154,32 +161,53 @@ public class HomeFragment extends Fragment {
      */
     private void initWifiScan(View root) {
 
-        final Button wifiRefreshBtn = root.findViewById(R.id.btn_wifi_refresh);
+        final Button wifiCollectBtn = root.findViewById(R.id.btn_wifi_collect);
+        final Button wifiLocateBtn = root.findViewById(R.id.btn_wifi_locate);
 
         WifiManager wifi = (WifiManager) root.getContext().getSystemService(WIFI_SERVICE);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        getActivity().registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                printWifiScanResults(wifi);
-                // 发送请求到服务器
-                try {
-                    postWifiScanResults(wifi);
-                } catch (Exception e) {
-                    homeViewModel.addText("http post error: " + e.getMessage());
-                    System.out.println(e.getMessage());
-                }
-            }
-        }, filter);
 
-
-        // 按钮触发手动更新
-        wifiRefreshBtn.setOnClickListener(v -> {
+        // 按钮触发手动更新并标记事件处理
+        wifiCollectBtn.setOnClickListener(v -> {
 
             // scan wifi
             wifi.startScan();
+
+            getActivity().registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    printWifiScanResults(wifi);
+                    // 发送请求到服务器
+                    try {
+                        collectWifiScanResults(wifi);
+                    } catch (Exception e) {
+                        homeViewModel.addText("http post error: " + e.getMessage());
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }, filter);
+        });
+
+        wifiLocateBtn.setOnClickListener(v -> {
+
+            // scan wifi
+            wifi.startScan();
+
+            getActivity().registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    printWifiScanResults(wifi);
+                    // 发送请求到服务器
+                    try {
+                        locateWifiScanResults(wifi);
+                    } catch (Exception e) {
+                        homeViewModel.addText("http post error: " + e.getMessage());
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }, filter);
         });
     }
 
@@ -209,12 +237,12 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * 发送 Wi-Fi 扫描结果到服务器
+     * 上报 Wi-Fi 扫描结果和坐标到服务器
      *
      * @param wifi
      * @throws Exception
      */
-    private void postWifiScanResults(WifiManager wifi) throws Exception {
+    private void collectWifiScanResults(WifiManager wifi) throws Exception {
 
         if (wifi.isWifiEnabled()) {
 
@@ -239,6 +267,57 @@ public class HomeFragment extends Fragment {
                     .post(reqBody)
                     .build();
             sendHTTPReq(req);
+        }
+    }
+
+    /**
+     * 根据 Wi-Fi 扫描结果定位坐标
+     *
+     * @param wifi
+     * @throws Exception
+     */
+    @SuppressLint("DefaultLocale")
+    private void locateWifiScanResults(WifiManager wifi) throws Exception {
+
+        if (wifi.isWifiEnabled()) {
+
+            List<ScanResult> scanResults = wifi.getScanResults();
+
+            // 构造请求参数
+            List<APInfo> apList = scanResults.stream()
+                    .map(ap -> new APInfo(ap.BSSID, ap.level))
+                    .collect(Collectors.toList());
+
+            LocateReqDTO reqData = new LocateReqDTO(
+                    2,
+                    apList
+            );
+
+            URL url = new URL(host.getValue() + ":8080" + "/locate");
+            RequestBody reqBody = RequestBody.create(MediaType.parse("application/json"), JSONObject.toJSONString(reqData));
+
+            Request req = new Request.Builder()
+                    .url(url)
+                    .post(reqBody)
+                    .build();
+
+            // 新线程发送请求
+            new Thread(() -> {
+                try {
+                    Response resp = httpClient.newCall(req).execute();
+                    if (resp.code() != 200) {
+                        throw new Exception("Status error: " + resp.code());
+                    } else {
+                        LocateRespDTO data = JSONObject.parseObject(resp.body().string(), LocateRespDTO.class);
+                        addMainTextOnUIThread(String.format("location: {%f, %f}\n",
+                                data.getData().getX(), data.getData().getY()));
+//                        addMainTextOnUIThread();
+                        storeHostValue();
+                    }
+                } catch (Exception e) {
+                    addMainTextOnUIThread("http thread error:" + e.toString());
+                }
+            }).start();
         }
     }
 
